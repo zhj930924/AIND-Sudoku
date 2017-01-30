@@ -133,27 +133,22 @@ def hidden_twins(values):
         the values dictionary with the hidden twins eliminated from PEERS.
     """
     # Find all instances of hidden twins
-    new_values = values.copy()
+
     for unit in UNITLIST:
         unsolved = [box for box in unit if len(values[box]) > 1]
         pairs = list(combinations(unsolved, 2))
         for pair in pairs:
             twin1, twin2 = pair
-            print(pair)
             pair_digits = set(values[twin1]) & set(values[twin2])
-            print(pair_digits)
             others = set(unsolved) - set(pair)
-            print(others)
             others_digits = get_values_set(values, others)
-            print(others_digits)
-            print(pair_digits - others_digits)
-            print()
+
             # Identify the hidden twin
             if len(pair_digits) > 2 and len(pair_digits - others_digits) == 2:
                 twin_value = set_to_value(pair_digits - others_digits)
-                new_values = assign_value(new_values, twin1, twin_value)
-                new_values = assign_value(new_values, twin2, twin_value)
-    return new_values
+                values = assign_value(values, twin1, twin_value)
+                values = assign_value(values, twin2, twin_value)
+    return values
 
 
 def eliminate(values):
@@ -167,9 +162,8 @@ def eliminate(values):
     for box in solved_values:
         digit = values[box]
         for peer in PEERS[box]:
-            if len(values[peer]) > 1:
-                eliminated = values[peer].replace(digit, '')
-                values = assign_value(values, peer, eliminated)
+            eliminated = values[peer].replace(digit, '')
+            values = assign_value(values, peer, eliminated)
     return values
 
 
